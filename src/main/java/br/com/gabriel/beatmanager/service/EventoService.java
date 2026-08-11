@@ -3,13 +3,12 @@ package br.com.gabriel.beatmanager.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import br.com.gabriel.beatmanager.dto.request.EventoRequestDTO;
 import br.com.gabriel.beatmanager.dto.request.EventoUpdateRequestDTO;
 import br.com.gabriel.beatmanager.dto.response.EventoResponseDTO;
+import br.com.gabriel.beatmanager.exception.ResourceNotFoundException;
 import br.com.gabriel.beatmanager.model.Administrador;
 import br.com.gabriel.beatmanager.model.Evento;
 import br.com.gabriel.beatmanager.repository.AdministradorRepository;
@@ -40,13 +39,13 @@ public class EventoService {
 
     public EventoResponseDTO buscarPorId(Long id) {
         Evento evento = eventoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Evento não encontrado"));
         return EventoResponseDTO.fromEntity(evento);
     }
 
     public EventoResponseDTO criar(EventoRequestDTO dto) {
         Administrador administrador = administradorRepository.findById(dto.getAdministradorId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Administrador não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado"));
 
         Evento evento = Evento.builder()
                 .nome(dto.getNome())
@@ -61,7 +60,7 @@ public class EventoService {
 
     public EventoResponseDTO atualizar(Long id, EventoUpdateRequestDTO dto) {
         Evento evento = eventoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Evento não encontrado"));
 
         evento.setData(dto.getData());
         evento.setLocalizacao(dto.getLocalizacao());
@@ -71,7 +70,7 @@ public class EventoService {
 
     public void deletar(Long id) {
         if (!eventoRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento não encontrado");
+            throw new ResourceNotFoundException("Evento não encontrado");
         }
         eventoRepository.deleteById(id);
     }
