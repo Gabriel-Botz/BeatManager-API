@@ -99,4 +99,23 @@ class AuthServiceTest {
 
         assertThrows(SenhasNaoConferemException.class, () -> authService.login(dto));
     }
+
+    @Test
+    void buscarPerfil_deveRetornarAdminQuandoEmailExiste() {
+        Administrador admin = Administrador.builder().id(1L).nome("João").email("joao@email.com").senha("hashed").build();
+
+        when(administradorRepository.findByEmail("joao@email.com")).thenReturn(Optional.of(admin));
+
+        AdministradorResponseDTO response = authService.buscarPerfil("joao@email.com");
+
+        assertEquals("João", response.getNome());
+        assertEquals("joao@email.com", response.getEmail());
+    }
+
+    @Test
+    void buscarPerfil_deveLancarExcecaoQuandoEmailNaoExiste() {
+        when(administradorRepository.findByEmail("inexistente@email.com")).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> authService.buscarPerfil("inexistente@email.com"));
+    }
 }
