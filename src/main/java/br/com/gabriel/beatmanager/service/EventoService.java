@@ -1,8 +1,7 @@
 package br.com.gabriel.beatmanager.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,16 +27,14 @@ public class EventoService {
         this.administradorRepository = administradorRepository;
     }
 
-    public List<EventoResponseDTO> listarTodos() {
-        return eventoRepository.findAll().stream()
-                .map(EventoResponseDTO::fromEntity)
-                .collect(Collectors.toList());
+    public Page<EventoResponseDTO> listarTodos(Pageable pageable) {
+        return eventoRepository.findAll(pageable)
+                .map(EventoResponseDTO::fromEntity);
     }
 
-    public List<EventoResponseDTO> listarPorAdministrador(Long administradorId) {
-        return eventoRepository.findByAdministradorId(administradorId).stream()
-                .map(EventoResponseDTO::fromEntity)
-                .collect(Collectors.toList());
+    public Page<EventoResponseDTO> listarPorAdministrador(Long administradorId, Pageable pageable) {
+        return eventoRepository.findByAdministradorId(administradorId, pageable)
+                .map(EventoResponseDTO::fromEntity);
     }
 
     public EventoResponseDTO buscarPorId(Long id) {
