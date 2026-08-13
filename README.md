@@ -7,6 +7,7 @@ API REST de gerenciamento de eventos construída com Spring Boot 4.1.0, Java 17 
 - Java 17+
 - Maven 3.9+
 - PostgreSQL 14+
+- Conta no [Cloudinary](https://cloudinary.com) (para upload de imagens)
 
 ## Configuração
 
@@ -31,11 +32,19 @@ cp .env.example .env
 Edite o `.env` com suas credenciais:
 
 ```env
+# Banco de dados
 DB_URL=jdbc:postgresql://localhost:5432/beatmanager
 DB_USERNAME=postgres
 DB_PASSWORD=sua_senha
+
+# JWT
 JWT_SECRET=sua_chave_secreta_base64
 JWT_EXPIRATION=86400000
+
+# Cloudinary (https://cloudinary.com/console)
+CLOUDINARY_CLOUD_NAME=seu_cloud_name
+CLOUDINARY_API_KEY=sua_api_key
+CLOUDINARY_API_SECRET=sua_api_secret
 ```
 
 ## Executar
@@ -52,14 +61,15 @@ A API estará disponível em `http://localhost:8081`.
 
 ## Endpoints
 
-### Autenticação (público)
+### Autenticação
 
-| Método | Descrição |
-|--------|-----------|
-| `POST /auth/cadastro` | Cadastrar administrador |
-| `POST /auth/login` | Login e receber token JWT |
+| Método | Autenticado | Descrição |
+|--------|:-----------:|-----------|
+| `POST /auth/cadastro` | Não | Cadastrar administrador |
+| `POST /auth/login` | Não | Login e receber token JWT |
+| `GET /auth/me` | Sim | Retornar dados do usuário logado |
 
-### Administradores (autenticado)
+### Administradores
 
 | Método | Descrição |
 |--------|-----------|
@@ -70,7 +80,7 @@ A API estará disponível em `http://localhost:8081`.
 | `PUT /administradores/{id}` | Atualizar |
 | `DELETE /administradores/{id}` | Deletar |
 
-### Eventos (autenticado)
+### Eventos
 
 | Método | Descrição |
 |--------|-----------|
@@ -80,6 +90,25 @@ A API estará disponível em `http://localhost:8081`.
 | `POST /eventos` | Criar (dono extraído do token) |
 | `PUT /eventos/{id}` | Atualizar data/local (apenas dono) |
 | `DELETE /eventos/{id}` | Deletar (apenas dono) |
+
+### Upload de imagens
+
+| Método | Descrição |
+|--------|-----------|
+| `POST /upload` | Upload de imagem (multipart/form-data, campo `file`) |
+| `DELETE /upload?imageUrl=...` | Deletar imagem pelo URL |
+
+**Upload:**
+```bash
+curl -X POST http://localhost:8081/upload \
+  -H "Authorization: Bearer <token>" \
+  -F "file=@imagem.jpg"
+```
+
+**Response:**
+```json
+{ "url": "https://res.cloudinary.com/.../image/upload/..." }
+```
 
 ### Paginação
 
@@ -111,6 +140,7 @@ No Swagger, clique em **Authorize** e insira o token JWT recebido no login para 
 - Spring Data JPA
 - PostgreSQL
 - Flyway
+- Cloudinary (upload de imagens)
 - SpringDoc OpenAPI (Swagger)
 - Lombok
 - JUnit 5 + Mockito
