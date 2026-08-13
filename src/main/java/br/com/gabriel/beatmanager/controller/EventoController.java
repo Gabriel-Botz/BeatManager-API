@@ -1,7 +1,8 @@
 package br.com.gabriel.beatmanager.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,13 +32,14 @@ public class EventoController {
     }
 
     @GetMapping
-    public List<EventoResponseDTO> listarTodos() {
-        return eventoService.listarTodos();
+    public Page<EventoResponseDTO> listarTodos(@PageableDefault(size = 10) Pageable pageable) {
+        return eventoService.listarTodos(pageable);
     }
 
     @GetMapping("/administrador/{administradorId}")
-    public List<EventoResponseDTO> listarPorAdministrador(@PathVariable Long administradorId) {
-        return eventoService.listarPorAdministrador(administradorId);
+    public Page<EventoResponseDTO> listarPorAdministrador(@PathVariable Long administradorId,
+                                                          @PageableDefault(size = 10) Pageable pageable) {
+        return eventoService.listarPorAdministrador(administradorId, pageable);
     }
 
     @GetMapping("/{id}")
