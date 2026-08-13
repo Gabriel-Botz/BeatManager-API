@@ -52,6 +52,6 @@ public class AuthService {
         }
 
         String token = jwtService.gerarToken(administrador.getId(), administrador.getEmail());
-        return new AuthResponseDTO(token);
+        return new AuthResponseDTO(token, administrador.getId(), administrador.getNome(), administrador.getEmail());
     }
 }
