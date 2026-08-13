@@ -1,6 +1,9 @@
 package br.com.gabriel.beatmanager.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,5 +46,13 @@ public class AuthController {
     @ApiResponse(responseCode = "400", description = "Senha incorreta")
     public AuthResponseDTO login(@RequestBody @Valid LoginRequestDTO dto) {
         return authService.login(dto);
+    }
+
+    @GetMapping("/me")
+    @Operation(summary = "Perfil do usuário logado", description = "Retorna os dados do administrador autenticado")
+    @ApiResponse(responseCode = "200", description = "Perfil retornado com sucesso")
+    public AdministradorResponseDTO me(Authentication authentication) {
+        String email = ((UserDetails) authentication.getPrincipal()).getUsername();
+        return authService.buscarPerfil(email);
     }
 }
