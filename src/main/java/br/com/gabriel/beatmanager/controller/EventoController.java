@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.gabriel.beatmanager.dto.request.EventoRequestDTO;
+import br.com.gabriel.beatmanager.dto.request.EventoUpdateRequestDTO;
 import br.com.gabriel.beatmanager.dto.response.EventoResponseDTO;
 import br.com.gabriel.beatmanager.service.EventoService;
 import jakarta.validation.Valid;
@@ -51,7 +52,7 @@ public class EventoController {
     }
 
     @PutMapping("/{id}")
-    public EventoResponseDTO atualizar(@PathVariable Long id, @RequestBody @Valid EventoRequestDTO dto) {
+    public EventoResponseDTO atualizar(@PathVariable Long id, @RequestBody @Valid EventoUpdateRequestDTO dto) {
         return eventoService.atualizar(id, dto);
     }
 
