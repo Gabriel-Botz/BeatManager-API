@@ -52,6 +52,12 @@ public class AuthService {
         }
 
         String token = jwtService.gerarToken(administrador.getId(), administrador.getEmail());
-        return new AuthResponseDTO(token);
+        return new AuthResponseDTO(token, administrador.getId(), administrador.getNome(), administrador.getEmail());
+    }
+
+    public AdministradorResponseDTO buscarPerfil(String email) {
+        Administrador administrador = administradorRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado"));
+        return AdministradorResponseDTO.fromEntity(administrador);
     }
 }

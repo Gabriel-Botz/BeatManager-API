@@ -10,9 +10,18 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Resposta com token JWT")
+@Schema(description = "Resposta com token JWT e dados do administrador")
 public class AuthResponseDTO {
 
     @Schema(description = "Token JWT para autenticação", example = "eyJhbGciOiJIUzI1NiJ9...")
     private String token;
+
+    @Schema(description = "ID do administrador", example = "1")
+    private Long id;
+
+    @Schema(description = "Nome do administrador", example = "João Silva")
+    private String nome;
+
+    @Schema(description = "E-mail do administrador", example = "joao@email.com")
+    private String email;
 }
