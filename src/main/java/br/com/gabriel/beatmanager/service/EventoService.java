@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import br.com.gabriel.beatmanager.dto.request.EventoRequestDTO;
 import br.com.gabriel.beatmanager.dto.request.EventoUpdateRequestDTO;
 import br.com.gabriel.beatmanager.dto.response.EventoResponseDTO;
+import br.com.gabriel.beatmanager.exception.ForbiddenException;
 import br.com.gabriel.beatmanager.exception.ResourceNotFoundException;
 import br.com.gabriel.beatmanager.model.Administrador;
 import br.com.gabriel.beatmanager.model.Evento;
@@ -65,6 +66,11 @@ public class EventoService {
         Evento evento = eventoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Evento não encontrado"));
 
+        Long administradorId = extrairAdministradorIdDoToken();
+        if (!evento.getAdministrador().getId().equals(administradorId)) {
+            throw new ForbiddenException("Você não tem permissão para alterar este evento");
+        }
+
         evento.setData(dto.getData());
         evento.setLocalizacao(dto.getLocalizacao());
 
@@ -72,10 +78,15 @@ public class EventoService {
     }
 
     public void deletar(Long id) {
-        if (!eventoRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Evento não encontrado");
+        Evento evento = eventoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Evento não encontrado"));
+
+        Long administradorId = extrairAdministradorIdDoToken();
+        if (!evento.getAdministrador().getId().equals(administradorId)) {
+            throw new ForbiddenException("Você não tem permissão para deletar este evento");
         }
-        eventoRepository.deleteById(id);
+
+        eventoRepository.delete(evento);
     }
 
     private Long extrairAdministradorIdDoToken() {
