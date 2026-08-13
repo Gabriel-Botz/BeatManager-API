@@ -27,6 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import br.com.gabriel.beatmanager.dto.request.EventoRequestDTO;
 import br.com.gabriel.beatmanager.dto.request.EventoUpdateRequestDTO;
 import br.com.gabriel.beatmanager.dto.response.EventoResponseDTO;
+import br.com.gabriel.beatmanager.enums.TipoEvento;
 import br.com.gabriel.beatmanager.exception.ForbiddenException;
 import br.com.gabriel.beatmanager.exception.ResourceNotFoundException;
 import br.com.gabriel.beatmanager.model.Administrador;
@@ -119,7 +120,7 @@ class EventoServiceTest {
         autenticarUsuario();
 
         EventoRequestDTO dto = new EventoRequestDTO("Show", LocalDateTime.of(2026, 8, 20, 20, 0),
-                "Av. Paulista", "Descrição", "https://example.com/img.jpg");
+                "Av. Paulista", "Descrição", "https://example.com/img.jpg", TipoEvento.SHOW);
 
         when(administradorRepository.findByEmail("joao@email.com")).thenReturn(Optional.of(administrador));
         when(administradorRepository.findById(1L)).thenReturn(Optional.of(administrador));

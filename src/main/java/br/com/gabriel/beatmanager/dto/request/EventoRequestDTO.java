@@ -2,6 +2,7 @@ package br.com.gabriel.beatmanager.dto.request;
 
 import java.time.LocalDateTime;
 
+import br.com.gabriel.beatmanager.enums.TipoEvento;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -36,4 +37,8 @@ public class EventoRequestDTO {
     @NotBlank(message = "URL da imagem é obrigatória")
     @Schema(description = "URL da imagem do evento", example = "https://r2.example.com/evento.jpg")
     private String imagemUrl;
+
+    @NotNull(message = "Tipo é obrigatório")
+    @Schema(description = "Tipo do evento", example = "SHOW")
+    private TipoEvento tipo;
 }

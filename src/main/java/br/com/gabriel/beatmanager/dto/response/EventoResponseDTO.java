@@ -2,6 +2,7 @@ package br.com.gabriel.beatmanager.dto.response;
 
 import java.time.LocalDateTime;
 
+import br.com.gabriel.beatmanager.enums.TipoEvento;
 import br.com.gabriel.beatmanager.model.Evento;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,9 @@ public class EventoResponseDTO {
     @Schema(description = "URL da imagem do evento", example = "https://r2.example.com/evento.jpg")
     private String imagemUrl;
 
+    @Schema(description = "Tipo do evento", example = "SHOW")
+    private TipoEvento tipo;
+
     @Schema(description = "ID do administrador responsável", example = "1")
     private Long administradorId;
 
@@ -48,6 +52,7 @@ public class EventoResponseDTO {
         dto.setLocalizacao(evento.getLocalizacao());
         dto.setDescricao(evento.getDescricao());
         dto.setImagemUrl(evento.getImagemUrl());
+        dto.setTipo(evento.getTipo());
         if (evento.getAdministrador() != null) {
             dto.setAdministradorId(evento.getAdministrador().getId());
             dto.setAdministradorNome(evento.getAdministrador().getNome());
