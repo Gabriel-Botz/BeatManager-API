@@ -29,7 +29,4 @@ public class EventoRequestDTO {
 
     @NotBlank(message = "URL da imagem é obrigatória")
     private String imagemUrl;
-
-    @NotNull(message = "ID do administrador é obrigatório")
-    private Long administradorId;
 }
