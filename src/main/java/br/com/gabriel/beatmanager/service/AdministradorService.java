@@ -3,6 +3,7 @@ package br.com.gabriel.beatmanager.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.gabriel.beatmanager.dto.request.AdministradorRequestDTO;
@@ -15,9 +16,11 @@ import br.com.gabriel.beatmanager.repository.AdministradorRepository;
 public class AdministradorService {
 
     private final AdministradorRepository administradorRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AdministradorService(AdministradorRepository administradorRepository) {
+    public AdministradorService(AdministradorRepository administradorRepository, PasswordEncoder passwordEncoder) {
         this.administradorRepository = administradorRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<AdministradorResponseDTO> listarTodos() {
@@ -42,7 +45,7 @@ public class AdministradorService {
         Administrador administrador = Administrador.builder()
                 .nome(dto.getNome())
                 .email(dto.getEmail())
-                .senha(dto.getSenha())
+                .senha(passwordEncoder.encode(dto.getSenha()))
                 .build();
         return AdministradorResponseDTO.fromEntity(administradorRepository.save(administrador));
     }
@@ -55,7 +58,7 @@ public class AdministradorService {
                 .id(id)
                 .nome(dto.getNome())
                 .email(dto.getEmail())
-                .senha(dto.getSenha())
+                .senha(passwordEncoder.encode(dto.getSenha()))
                 .build();
         return AdministradorResponseDTO.fromEntity(administradorRepository.save(administrador));
     }
