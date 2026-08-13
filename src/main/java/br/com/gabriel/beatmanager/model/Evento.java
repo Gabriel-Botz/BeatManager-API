@@ -2,8 +2,11 @@ package br.com.gabriel.beatmanager.model;
 
 import java.time.LocalDateTime;
 
+import br.com.gabriel.beatmanager.enums.TipoEvento;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -45,6 +48,10 @@ public class Evento {
 
     @Column(name = "imagem_url", nullable = false)
     private String imagemUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo", nullable = false)
+    private TipoEvento tipo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "administrador_id", nullable = false)

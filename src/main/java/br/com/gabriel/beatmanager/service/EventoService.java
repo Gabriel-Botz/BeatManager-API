@@ -54,6 +54,7 @@ public class EventoService {
                 .localizacao(dto.getLocalizacao())
                 .descricao(dto.getDescricao())
                 .imagemUrl(dto.getImagemUrl())
+                .tipo(dto.getTipo())
                 .administrador(administrador)
                 .build();
         return EventoResponseDTO.fromEntity(eventoRepository.save(evento));
