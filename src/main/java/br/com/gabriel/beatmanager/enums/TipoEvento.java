@@ -10,7 +10,5 @@ public enum TipoEvento {
     SHOW,
     CLUBNIGHT,
     POOLPARTY,
-    AFTER,
-    WORKSHOP,
-    LANCAMENTO
+    AFTER
 }
