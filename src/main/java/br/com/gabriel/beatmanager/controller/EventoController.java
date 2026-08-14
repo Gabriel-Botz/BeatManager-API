@@ -38,7 +38,7 @@ public class EventoController {
     @GetMapping
     @Operation(summary = "Listar todos", description = "Lista todos os eventos com paginação")
     @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
-    public Page<EventoResponseDTO> listarTodos(@PageableDefault(size = 10) Pageable pageable) {
+    public Page<EventoResponseDTO> listarTodos(@PageableDefault(size = 6) Pageable pageable) {
         return eventoService.listarTodos(pageable);
     }
 
@@ -46,7 +46,7 @@ public class EventoController {
     @Operation(summary = "Listar por administrador", description = "Lista eventos de um administrador específico")
     @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
     public Page<EventoResponseDTO> listarPorAdministrador(@PathVariable Long administradorId,
-                                                          @PageableDefault(size = 10) Pageable pageable) {
+                                                          @PageableDefault(size = 6) Pageable pageable) {
         return eventoService.listarPorAdministrador(administradorId, pageable);
     }
 
