@@ -10,15 +10,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import br.com.gabriel.beatmanager.dto.request.AdministradorRequestDTO;
 import br.com.gabriel.beatmanager.dto.response.AdministradorResponseDTO;
+import br.com.gabriel.beatmanager.exception.ForbiddenException;
 import br.com.gabriel.beatmanager.exception.ResourceNotFoundException;
 import br.com.gabriel.beatmanager.model.Administrador;
 import br.com.gabriel.beatmanager.repository.AdministradorRepository;
@@ -34,6 +41,28 @@ class AdministradorServiceTest {
 
     @InjectMocks
     private AdministradorService administradorService;
+
+    @BeforeEach
+    void setUp() {
+        Administrador admin = Administrador.builder().id(1L).nome("João").email("joao@email.com").senha("hashed").build();
+        autenticarUsuario(admin);
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
+    private void autenticarUsuario(Administrador admin) {
+        UserDetails userDetails = User.builder()
+                .username(admin.getEmail())
+                .password(admin.getSenha())
+                .roles("ADMIN")
+                .build();
+        UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
 
     @Test
     void listarTodos_deveRetornarListaDeAdmins() {
@@ -88,6 +117,8 @@ class AdministradorServiceTest {
         Administrador admin = Administrador.builder().id(1L).nome("João Updated").email("joao@email.com").senha("newHashed").build();
 
         when(administradorRepository.existsById(1L)).thenReturn(true);
+        when(administradorRepository.findByEmail("joao@email.com")).thenReturn(Optional.of(
+                Administrador.builder().id(1L).email("joao@email.com").senha("hashed").build()));
         when(passwordEncoder.encode("nova123")).thenReturn("newHashed");
         when(administradorRepository.save(any(Administrador.class))).thenReturn(admin);
 
@@ -106,8 +137,21 @@ class AdministradorServiceTest {
     }
 
     @Test
+    void atualizar_deveLancarExcecaoQuandoNaoEDono() {
+        AdministradorRequestDTO dto = new AdministradorRequestDTO("Maria Updated", "maria@email.com", "123456");
+
+        when(administradorRepository.existsById(2L)).thenReturn(true);
+        when(administradorRepository.findByEmail("joao@email.com")).thenReturn(Optional.of(
+                Administrador.builder().id(1L).email("joao@email.com").senha("hashed").build()));
+
+        assertThrows(ForbiddenException.class, () -> administradorService.atualizar(2L, dto));
+    }
+
+    @Test
     void deletar_deveDeletarAdminQuandoExiste() {
         when(administradorRepository.existsById(1L)).thenReturn(true);
+        when(administradorRepository.findByEmail("joao@email.com")).thenReturn(Optional.of(
+                Administrador.builder().id(1L).email("joao@email.com").senha("hashed").build()));
 
         administradorService.deletar(1L);
 
@@ -119,5 +163,14 @@ class AdministradorServiceTest {
         when(administradorRepository.existsById(99L)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> administradorService.deletar(99L));
+    }
+
+    @Test
+    void deletar_deveLancarExcecaoQuandoNaoEDono() {
+        when(administradorRepository.existsById(2L)).thenReturn(true);
+        when(administradorRepository.findByEmail("joao@email.com")).thenReturn(Optional.of(
+                Administrador.builder().id(1L).email("joao@email.com").senha("hashed").build()));
+
+        assertThrows(ForbiddenException.class, () -> administradorService.deletar(2L));
     }
 }

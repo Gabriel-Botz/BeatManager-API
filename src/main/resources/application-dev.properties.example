@@ -4,7 +4,7 @@ spring.datasource.url=jdbc:postgresql://localhost:5432/beatmanager
 spring.datasource.username=postgres
 spring.datasource.password=SUA_SENHA
 
-server.port=8081
+server.port=8082
 
 jwt.secret=SUA_SECRET_KEY_BASE64
 

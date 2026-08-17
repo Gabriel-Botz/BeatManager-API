@@ -3,11 +3,14 @@ package br.com.gabriel.beatmanager.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.gabriel.beatmanager.dto.request.AdministradorRequestDTO;
 import br.com.gabriel.beatmanager.dto.response.AdministradorResponseDTO;
+import br.com.gabriel.beatmanager.exception.ForbiddenException;
 import br.com.gabriel.beatmanager.exception.ResourceNotFoundException;
 import br.com.gabriel.beatmanager.model.Administrador;
 import br.com.gabriel.beatmanager.repository.AdministradorRepository;
@@ -54,6 +57,12 @@ public class AdministradorService {
         if (!administradorRepository.existsById(id)) {
             throw new ResourceNotFoundException("Administrador não encontrado");
         }
+
+        Long administradorId = extrairAdministradorIdDoToken();
+        if (!administradorId.equals(id)) {
+            throw new ForbiddenException("Você não tem permissão para alterar este administrador");
+        }
+
         Administrador administrador = Administrador.builder()
                 .id(id)
                 .nome(dto.getNome())
@@ -67,6 +76,23 @@ public class AdministradorService {
         if (!administradorRepository.existsById(id)) {
             throw new ResourceNotFoundException("Administrador não encontrado");
         }
+
+        Long administradorId = extrairAdministradorIdDoToken();
+        if (!administradorId.equals(id)) {
+            throw new ForbiddenException("Você não tem permissão para deletar este administrador");
+        }
+
         administradorRepository.deleteById(id);
+    }
+
+    private Long extrairAdministradorIdDoToken() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof org.springframework.security.core.userdetails.UserDetails)) {
+            throw new ResourceNotFoundException("Usuário não autenticado");
+        }
+        String email = ((org.springframework.security.core.userdetails.UserDetails) auth.getPrincipal()).getUsername();
+        return administradorRepository.findByEmail(email)
+                .map(Administrador::getId)
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado"));
     }
 }
